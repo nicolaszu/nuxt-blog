@@ -1,0 +1,10 @@
+query($id: ID) {
+  post(id: $id) {
+    title
+    dateCreated
+    tags
+    author
+    coverImage
+    htmlContent
+  }
+}

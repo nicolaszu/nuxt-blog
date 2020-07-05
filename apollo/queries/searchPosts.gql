@@ -1,0 +1,14 @@
+query($limit: Int, $offset: Int, $filter: String) {
+  searchPosts(limit: $limit, offset: $offset, filter: $filter) {
+    posts {
+      title
+      dateCreated
+      tags
+      author
+      id
+      coverImage
+      description
+    }
+    totalCount
+  }
+}

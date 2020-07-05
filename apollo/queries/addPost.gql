@@ -1,0 +1,5 @@
+mutation AdPost($post: PostInput) {
+  addPost(input: $post) {
+    id
+  }
+}
