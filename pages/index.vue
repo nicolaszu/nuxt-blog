@@ -78,7 +78,7 @@ export default {
             }
           });
         } catch (e) {
-          console.log(e);
+          this.$modal.show({ message: e, variant: "error" });
         }
       }
     }

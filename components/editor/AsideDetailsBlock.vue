@@ -3,7 +3,13 @@
     <template>
       <div :class="{ required: !postMeta.author && validating }">
         <p class="section-title">* Author</p>
-        <input v-model="postMeta.author" type="text" class="width-100" />
+        <!-- eslint-disable -->
+        <input
+          v-model="editContent ? mutableContent.author : postMeta.author"
+          type="text"
+          class="width-100"
+        />
+        <!-- eslint-enable -->
       </div>
 
       <div
@@ -21,18 +27,22 @@
             </span>
           </div>
         </span>
+        <!-- eslint-disable -->
         <textarea
-          v-model="postMeta.description"
+          v-model="
+            editContent ? mutableContent.description : postMeta.description
+          "
           class="width-100"
           name="description"
           rows="3"
           :placeholder="`Max ${maxDescription} Characters`"
-        ></textarea>
+        />
+        <!-- eslint-disable -->
       </div>
 
       <div>
         <client-only>
-          <span class="section-title ">
+          <span @click="addExistingTags" class="section-title ">
             Tags
             <div>
               <span v-if="maxTagsReached" class="complete">limit reached</span>
@@ -42,6 +52,7 @@
             </div>
           </span>
           <vue-tags-input
+            ref="tag_input"
             v-model="tag"
             :max-tags="maxTags"
             @tags-changed="updateTags"
@@ -65,7 +76,7 @@
               Drag and drop
             </h3>
             <div class="subtitle">
-              or<span class="browse"> browse </span>your files
+              or<span class="browse"> browse </span>your images
             </div>
           </div>
         </dropzone>
@@ -78,12 +89,16 @@
 import Dropzone from "nuxt-dropzone";
 import "nuxt-dropzone/dropzone.css";
 import AddFileIcon from "@/assets/icons/editor/addFile.svg?inline";
+import editPost from "@/mixins/editPost";
+
 let VueTagsInput;
 if (process.client) {
   VueTagsInput = require("@johmun/vue-tags-input").default;
 }
 
 export default {
+  mixins: [editPost],
+
   components: {
     Dropzone,
     AddFileIcon,
@@ -96,7 +111,8 @@ export default {
         maxFiles: 1,
         addRemoveLinks: true,
         thumbnailWidth: 350,
-        thumbnailHeight: 150
+        thumbnailHeight: 150,
+        acceptedFiles: [".jpeg", ".jpg", ".png"]
       },
       tag: "",
       maxTags: 5,
@@ -105,11 +121,10 @@ export default {
         author: "",
         description: "",
         tags: [],
-        coverImage: "",
         dateCreated: ""
       },
       validating: false,
-      maxDescription: 140
+      maxDescription: 100
     };
   },
   computed: {
@@ -126,6 +141,14 @@ export default {
       return false;
     }
   },
+  watch: {
+    maxTagsReached(isMax) {
+      console.log(isMax);
+      this.$refs.tag_input.$refs.newTagInput.placeholder = isMax
+        ? ""
+        : "Add Tag";
+    }
+  },
   mounted() {
     // eslint-disable-next-line
     const instance = this.$refs.el.dropzone;
@@ -134,37 +157,49 @@ export default {
     updateTags(tags) {
       this.postMeta.tags = tags.map((tag) => tag.text);
     },
+    removeTags() {
+      for (
+        let index = this.$refs.tag_input.tagsCopy.length - 1;
+        index >= 0;
+        index--
+      ) {
+        this.$refs.tag_input.deleteTag(index);
+      }
+    },
+    addExistingTags() {
+      console.log(this.$refs.tag_input);
+      this.mutableContent.tags.forEach((tag) => {
+        console.log(this.$refs.tag_input);
+      });
+    },
     imageAdded(file) {
       this.fileImage = file;
     },
-    async uploadImageAzure() {
-      const fileToUpload = this.fileImage;
-      if (fileToUpload) {
-        const time = this.$moment().unix();
-        const random = Math.floor(Math.random() * Math.floor(10000));
-        const imgName = fileToUpload.name
-          .replace(/\.[^/.]+$/, "")
-          .replace(/\s/g, "");
-        const extension = fileToUpload.name.split(".").pop();
+    async uploadImageAzure(fileToUpload) {
+      const time = this.$moment().unix();
+      const random = Math.floor(Math.random() * Math.floor(10000));
+      const imgName = fileToUpload.name
+        .replace(/\.[^/.]+$/, "")
+        .replace(/\s/g, "");
+      const extension = fileToUpload.name.split(".").pop();
 
-        const config = {
-          baseUrl: `${process.env.baseUrl}${random}${imgName}${time}.${extension}`,
-          sasToken: process.env.sasToken,
-          file: this.fileImage,
-          progress: (e) => console.log("progerss"),
-          complete: (e) => console.log("completed"),
-          error: (e) => console.log("error")
-        };
+      const config = {
+        baseUrl: `${process.env.baseUrl}${random}${imgName}${time}.${extension}`,
+        sasToken: process.env.sasToken,
+        file: this.fileImage,
+        progress: (e) => console.log("progerss"),
+        complete: (e) => console.log("completed"),
+        error: (e) => console.log("error")
+      };
 
-        await this.$azureUpload(config, this.$http);
-        return `${process.env.baseUrl}${random}${imgName}${time}.${extension}`;
-      } else {
-        return "";
-      }
+      await this.$azureUpload(config, this.$http);
+      return `${process.env.baseUrl}${random}${imgName}${time}.${extension}`;
     },
     async emitOnPublish() {
       await this.validate();
-      this.postMeta.coverImage = await this.uploadImageAzure();
+      if (this.fileImage) {
+        this.postMeta.coverImage = await this.uploadImageAzure(this.fileImage);
+      }
       this.postMeta.dateCreated = this.$moment().format("yyyy-MM-DD");
       this.$emit("publish", this.postMeta);
     },
@@ -178,6 +213,11 @@ export default {
         const err = "Description is too long";
         throw err;
       }
+    },
+    clearContent() {
+      Object.assign(this.$data, this.$options.data.apply(this));
+      this.$refs.el.dropzone.removeAllFiles();
+      this.removeTags();
     }
   }
 };

@@ -2,7 +2,15 @@
   <article>
     <template>
       <header>
-        <input v-model="title" placeholder="Title" class="title" type="text" />
+        <!-- eslint-disable -->
+        <!-- weird glitch here, using mutableContent.title throws error <!-->
+        <input
+          v-model="editContent ? mutableContent['title'] : title"
+          placeholder="Title"
+          class="title"
+          type="text"
+        />
+        <!-- eslint-enable -->
       </header>
       <div class="content">
         <client-only>
@@ -57,8 +65,9 @@ import htmlbars from "highlight.js/lib/languages/htmlbars";
 
 import BubbleMenu from "@/components/editor/bubbleMenu";
 import TopMenu from "@/components/editor/topMenu";
-
+import editPost from "@/mixins/editPost";
 export default {
+  mixins: [editPost],
   components: {
     EditorContent,
     BubbleMenu,
@@ -116,8 +125,13 @@ export default {
         new TableRow()
       ],
       onUpdate: ({ getHTML }) => {
-        this.html = getHTML();
-      }
+        if (this.editContent) {
+          this.mutableContent.html = getHTML();
+        } else {
+          this.html = getHTML();
+        }
+      },
+      content: this.mutableContent.html
     });
   },
 
@@ -132,7 +146,6 @@ export default {
     },
 
     validate() {
-      console.log(this.html);
       if (!this.title) {
         const error = "Please enter a title";
         throw error;
@@ -141,6 +154,11 @@ export default {
         const error = "Looks like you forgot to write a post";
         throw error;
       }
+    },
+    clearContent() {
+      this.title = "";
+      this.html = "";
+      this.editor.clearContent();
     }
   }
 };
@@ -220,185 +238,6 @@ header {
         cursor: pointer;
       }
     }
-  }
-}
-::v-deep .content {
-  .ltag__user {
-    display: none;
-  }
-  iframe {
-    max-width: 100%;
-  }
-  h1 {
-    font-size: $text-3xl;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  h2 {
-    font-size: $text-2xl;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  h3 {
-    font-size: $text-xl;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  h4 {
-    font-size: $text-base;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  a {
-    color: $primary-color;
-  }
-  p {
-    margin-bottom: 1rem;
-    line-height: 1.4;
-    code {
-      background-color: #d2f3e1;
-      border-radius: 0.25rem;
-      padding: 0.25rem;
-    }
-  }
-  img {
-    width: 100%;
-    border-radius: 0.5rem;
-  }
-  .highlight {
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-  }
-
-  ul {
-    list-style: inherit;
-    margin-bottom: 1rem;
-    li p {
-      margin-bottom: 0;
-    }
-  }
-  ol {
-    margin-bottom: 1rem;
-    list-style: decimal;
-  }
-  blockquote {
-    border-left: 3px solid rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.8);
-    padding-left: 0.8rem;
-    font-style: italic;
-  }
-  pre {
-    &::before {
-      content: attr(data-language);
-      text-transform: uppercase;
-      display: block;
-      text-align: right;
-      font-weight: bold;
-      font-size: 0.6rem;
-    }
-    code {
-      .hljs-comment,
-      .hljs-quote {
-        color: #999999;
-      }
-      .hljs-variable,
-      .hljs-template-variable,
-      .hljs-attribute,
-      .hljs-tag,
-      .hljs-name,
-      .hljs-regexp,
-      .hljs-link,
-      .hljs-name,
-      .hljs-selector-id,
-      .hljs-selector-class {
-        color: #f2777a;
-      }
-      .hljs-number,
-      .hljs-meta,
-      .hljs-built_in,
-      .hljs-builtin-name,
-      .hljs-literal,
-      .hljs-type,
-      .hljs-params {
-        color: #f99157;
-      }
-      .hljs-string,
-      .hljs-symbol,
-      .hljs-bullet {
-        color: #99cc99;
-      }
-      .hljs-title,
-      .hljs-section {
-        color: #ffcc66;
-      }
-      .hljs-keyword,
-      .hljs-selector-tag {
-        color: #6699cc;
-      }
-      .hljs-emphasis {
-        font-style: italic;
-      }
-      .hljs-strong {
-        font-weight: 700;
-      }
-    }
-  }
-  table {
-    border-collapse: collapse;
-    table-layout: fixed;
-    width: 100%;
-    margin: 0;
-    overflow: hidden;
-
-    td,
-    th {
-      min-width: 1em;
-      border: 2px solid $gray-color;
-      padding: 3px 5px;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      > * {
-        margin-bottom: 0;
-      }
-    }
-
-    th {
-      font-weight: bold;
-      text-align: left;
-    }
-
-    .selectedCell:after {
-      z-index: 2;
-      position: absolute;
-      content: "";
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background: rgba(200, 200, 255, 0.4);
-      pointer-events: none;
-    }
-
-    .column-resize-handle {
-      position: absolute;
-      right: -2px;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      z-index: 20;
-      background-color: #adf;
-      pointer-events: none;
-    }
-  }
-
-  .tableWrapper {
-    margin: 1em 0;
-    overflow-x: auto;
   }
 }
 

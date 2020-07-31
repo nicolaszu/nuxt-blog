@@ -11,7 +11,7 @@
       <img
         v-else
         :src="
-          `https://via.placeholder.com/1080X720.png/E5E5E5/808080?text=${imgPlaceholder}`
+          `https://via.placeholder.com/1080X720.png/dfe8ef/808080?text=${imgPlaceholder}`
         "
         :alt="post.title"
       />
@@ -102,6 +102,8 @@ article {
       letter-spacing: $-ls2;
       line-height: 1.3rem;
       color: $gray-color;
+      hyphens: auto;
+      word-break: break-word;
       span {
         margin-top: 0.5rem;
         color: $primary-color;

@@ -2,18 +2,20 @@
   <transition name="slide-fade">
     <div
       class="toast-container"
+      :class="variant"
       @mouseover="stopTimer"
       @mouseleave="startTimer"
+      v-if="visible"
     >
       <div class="icon">
-        <error-icon class="error" />
+        <component v-bind:is="icon"></component>
       </div>
       <div class="text-content">
-        <h6>Error</h6>
-        <p>{{ error }}</p>
+        <h6>{{ title }}</h6>
+        <p>{{ message }}</p>
       </div>
       <div class="icon">
-        <close-icon class="cursor" @click="emitClose" />
+        <close-icon class="cursor" @click="hide" />
       </div>
     </div>
   </transition>
@@ -21,39 +23,31 @@
 
 <script>
 import errorIcon from "@/assets/icons/error.svg?inline";
+import successIcon from "@/assets/icons/checkbox-circle.svg?inline";
 import closeIcon from "@/assets/icons/close.svg?inline";
+import Modal from "@/plugins/modal";
 
 export default {
   components: {
     errorIcon,
-    closeIcon
-  },
-  props: {
-    error: {
-      type: String,
-      default: "An error has occured"
-    },
-    timeout: {
-      type: Number,
-      default: 4000
-    }
+    closeIcon,
+    successIcon
   },
   data() {
     return {
-      timer: null
+      timer: null,
+      visible: false,
+      title: "Success",
+      message: "Successfully completed",
+      timeout: 4000,
+      variant: "success"
     };
   },
-  created() {
-    this.startTimer();
-  },
   methods: {
-    emitClose() {
-      this.$emit("close");
-    },
     startTimer() {
       if (this.timeout !== 0) {
         this.timer = setTimeout(() => {
-          this.emitClose();
+          this.hide();
         }, this.timeout);
       }
     },
@@ -61,7 +55,34 @@ export default {
       if (this.timer) {
         clearTimeout(this.timer);
       }
+    },
+    hide() {
+      this.visible = false;
+    },
+    show(params) {
+      this.startTimer();
+      this.visible = true;
+      this.variant = params.variant || "success";
+      this.message = params.message || this.variant;
+      this.title = params.title || this.variant;
     }
+  },
+  computed: {
+    icon() {
+      switch (this.variant) {
+        case "success":
+          return "success-icon";
+        case "error":
+          return "error-icon";
+        default:
+          return "success-icon";
+      }
+    }
+  },
+  beforeMount() {
+    Modal.EventBus.$on("show", (params) => {
+      this.show(params);
+    });
   }
 };
 </script>
@@ -80,19 +101,23 @@ export default {
   margin: 20px;
   min-width: 402px;
   height: 92px;
-  border-left: 0.5rem solid red;
 
   display: grid;
   grid-template-columns: 1fr 7fr 1fr;
   column-gap: 14px;
+  &.success {
+    border-left: 0.5rem solid $primary-color;
+  }
+
+  &.error {
+    border-left: 0.5rem solid red;
+  }
 }
 .icon {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  .error {
-    margin-left: 1rem;
-  }
+  margin-left: 1rem;
   .cursor {
     cursor: pointer;
   }
@@ -105,6 +130,7 @@ export default {
   align-items: baseline;
   h6 {
     font-size: $text-sm;
+    text-transform: capitalize;
   }
   p {
     font-size: $text-xs;

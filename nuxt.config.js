@@ -45,7 +45,9 @@ export default {
     { src: "~/plugins/vue-tags-input.js", mode: "client", ssr: false },
     { src: "~/plugins/vue-azure-blob-upload.js", mode: "client", ssr: false },
     "~/plugins/http",
-    "~/plugins/apollo-error-handler.js"
+    "~/plugins/apollo-error-handler.js",
+    "~/plugins/modal.js",
+    "~/plugins/highlight.js"
   ],
   /*
    ** Nuxt.js dev-modules
@@ -76,7 +78,7 @@ export default {
     }
   },
   styleResources: {
-    scss: ["~/assets/styles/tokens.scss"]
+    scss: ["~/assets/styles/tokens.scss", "~/assets/styles/codeHighlights.scss"]
   },
   build: {
     vendor: ["@johmun/vue-tags-input"],

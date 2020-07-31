@@ -67,7 +67,6 @@ export default {
   methods: {
     emitLoadMore(visible) {
       if (visible) {
-        console.log("posting");
         this.$emit("loadMore");
       }
     }

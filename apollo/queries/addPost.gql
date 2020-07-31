@@ -1,4 +1,4 @@
-mutation AdPost($post: PostInput) {
+mutation AddPost($post: PostInput) {
   addPost(input: $post) {
     id
   }

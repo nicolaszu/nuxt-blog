@@ -1,11 +1,20 @@
 <template>
   <div class="page-wrapper">
-    <error-toast v-if="error" :error="error" @close="error = null" />
     <div class="article-content-wrapper">
-      <editor-block ref="editor" class="article-block" @publish="saveContent" />
+      <editor-block
+        ref="editor"
+        class="article-block"
+        @publish="saveContent"
+        @edit="editContent"
+        :editContent="editContent"
+      />
       <div class="aside-username-wrapper">
         <div class="aside-username-block">
-          <aside-details-block ref="meta" @publish="saveMeta" />
+          <aside-details-block
+            ref="meta"
+            @publish="saveMeta"
+            :editContent="editContent"
+          />
           <button class="publish-button" @click="publish">Publish</button>
         </div>
       </div>
@@ -16,20 +25,24 @@
 <script>
 import EditorBlock from "@/components/editor/EditorBlock";
 import AsideDetailsBlock from "@/components/editor/AsideDetailsBlock";
-import ErrorToast from "@/components/editor/ErrorToast";
 
 import addPost from "~/apollo/queries/addPost";
 
 export default {
   components: {
     EditorBlock,
-    AsideDetailsBlock,
-    ErrorToast
+    AsideDetailsBlock
   },
   data() {
     return {
       post: {},
-      error: null
+      editContent: {
+        titles: "hello",
+        html: "<p>hi</p>",
+        author: "Nick",
+        description: "hello",
+        tags: ["tag"]
+      }
     };
   },
   methods: {
@@ -40,20 +53,30 @@ export default {
       this.post = { ...this.post, ...content };
     },
     handleError(err) {
-      this.error = err;
+      this.$modal.show({ message: err, variant: "error" });
     },
     async publish() {
       try {
+        this.$root.$loading.start();
         await this.$refs.meta.emitOnPublish();
         await this.$refs.editor.emitOnPublish();
-        await this.$apollo.mutate({
+        const postResp = await this.$apollo.mutate({
           mutation: addPost,
           variables: {
             post: this.post
           }
         });
+        this.$refs.meta.clearContent();
+        this.$refs.editor.clearContent();
+        this.$modal.show({ message: "Post Created", variant: "success" });
+        this.$router.push({
+          name: "post",
+          params: { post: postResp.data.addPost.id }
+        });
       } catch (err) {
         this.handleError(err);
+      } finally {
+        this.$root.$loading.finish();
       }
     }
   }

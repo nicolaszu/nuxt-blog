@@ -14,17 +14,29 @@
       <header>
         <h1>{{ post.title }}</h1>
         <div class="info">
-          <span>Nicolas Zuluaga •</span>
-          <time>
+          <span class="item">Nicolas Zuluaga •</span>
+          <time class="item">
             {{ $moment(post.dateCreated).format("MMM Do, YYYY ") }}
           </time>
+          <dropdown
+            :options="settingsDropdown"
+            class="item"
+            @selected="dropdownAction"
+          >
+            <template #options>
+              <div class="option danger" @click="deletePost">
+                <delete-icon />
+                <p>Delete Post</p>
+              </div>
+            </template>
+          </dropdown>
         </div>
         <div class="tags">
           <nuxt-link
             v-for="tag in post.tags"
             :key="tag"
             class="tag"
-            :to="{ name: 'index', query: { tag, filter: 'top=365' } }"
+            :to="{ name: 'search', query: { search: tag } }"
           >
             #{{ tag }}
           </nuxt-link>
@@ -33,16 +45,19 @@
           <img :src="post.coverImage" :alt="post.title" />
         </div>
       </header>
-      <div class="content" v-html="post.htmlContent" />
+      <div class="content" v-highlightjs v-html="post.htmlContent" />
     </template>
   </article>
 </template>
 
 <script>
 import post from "~/apollo/queries/post";
+import deletePost from "~/apollo/queries/deletePost";
+import dropdown from "~/components/Dropdown";
+import deleteIcon from "@/assets/icons/delete.svg?inline";
 
 export default {
-  components: {},
+  components: { dropdown, deleteIcon },
   apollo: {
     post: {
       prefetch: true,
@@ -61,14 +76,37 @@ export default {
     return {
       post: {},
       routeId: this.$route.params.post,
-      error: null
+      error: null,
+      settingsDropdown: {
+        Edit: "editPost"
+      }
     };
   },
-  // activated() {
-  //   if (this.$fetchState.timestamp <= Date.now() - 60000) {
-  //     this.$fetch();
-  //   }
-  // },
+  methods: {
+    dropdownAction(functionName) {
+      this[functionName]();
+    },
+    async deletePost() {
+      try {
+        await this.$apollo.mutate({
+          mutation: deletePost,
+          variables: {
+            id: this.$route.params.post
+          }
+        });
+        this.$modal.show({ message: "Post Deleted", variant: "success" });
+        this.$router.push({
+          name: "index"
+        });
+      } catch (e) {
+        this.$modal.show({ message: e, variant: "error" });
+      }
+    },
+    editPost() {
+      console.log("edit");
+    }
+  },
+
   head() {
     return {
       title: this.post.title
@@ -90,11 +128,15 @@ header {
     margin-bottom: 0.5rem;
   }
   .info {
+    display: flex;
     color: $dark-gray-color;
     font-size: $text-sm;
     margin-bottom: 1rem;
     span {
       font-weight: $display-font-weight;
+    }
+    .item {
+      margin: 3px;
     }
   }
   .tags {
@@ -133,70 +175,21 @@ header {
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      background: white;
     }
   }
 }
-::v-deep .content {
-  .ltag__user {
-    display: none;
-  }
-  iframe {
-    max-width: 100%;
-  }
-  h1 {
-    font-size: $text-3xl;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  h2 {
-    font-size: $text-2xl;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  h3 {
-    font-size: $text-xl;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  h4 {
-    font-size: $text-base;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    letter-spacing: $-ls2;
-  }
-  a {
-    color: $primary-color;
-  }
-  p {
-    margin-bottom: 1rem;
-    line-height: 1.4;
-    code {
-      background-color: #d2f3e1;
-      border-radius: 0.25rem;
-      padding: 0.25rem;
+
+.danger {
+  color: #eb5757 !important;
+  fill: #eb5757 !important;
+  &:hover {
+    background: #ffe6e6 !important;
+    color: #eb5757 !important;
+    svg {
+      fill: #eb5757 !important;
     }
-  }
-  img {
-    width: 100%;
-    border-radius: 0.5rem;
-  }
-  .highlight {
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-  }
-  ul {
-    list-style: numeral;
-    margin-bottom: 1rem;
-    li p {
-      margin-bottom: 0;
-    }
-  }
-  ol {
-    margin-bottom: 1rem;
   }
 }
 </style>

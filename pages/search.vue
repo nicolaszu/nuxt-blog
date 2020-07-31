@@ -3,7 +3,7 @@
     <div class="search-wrapper">
       <h2>Search:</h2>
       <input
-        v-model="searchInput"
+        v-model="searchQuery"
         placeholder="Search Blok..."
         type="text"
         ref="search"
@@ -100,7 +100,7 @@ export default {
             }
           });
         } catch (e) {
-          console.log(e);
+          this.$modal.show({ message: e, variant: "error" });
         }
       }
     },

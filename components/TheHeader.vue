@@ -57,10 +57,6 @@ export default {
         {
           name: "Home",
           filter: ""
-        },
-        {
-          name: "News",
-          filter: "top=365"
         }
       ],
       scrollPosition: 0,
@@ -104,22 +100,22 @@ export default {
   },
   methods: {
     handleScroll() {
-      this.lastScrollPosition = this.scrollPosition;
-      this.scrollPosition = window.scrollY;
-      if (
-        this.lastScrollPosition < this.scrollPosition &&
-        this.scrollPosition > 100
-      ) {
-        this.headerIsHidden = true;
-        this.searchOverlay = false;
-      } else {
-        this.headerIsHidden = false;
-        if (this.scrollPosition <= 30) {
-          this.headerHasShadow = false;
-        } else {
-          this.headerHasShadow = true;
-        }
+      const currentScrollPosition =
+        window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScrollPosition < 0) {
+        return;
       }
+
+      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 60) {
+        return;
+      }
+
+      this.headerIsHidden = currentScrollPosition >= this.lastScrollPosition;
+      this.headerHasShadow =
+        currentScrollPosition >= 60 && !this.headerIsHidden;
+      this.searchOverlay =
+        this.searchOverlay && currentScrollPosition < this.lastScrollPosition;
+      this.lastScrollPosition = currentScrollPosition;
     },
     handleEscape(e) {
       if (e.key === "Escape" && this.searchOverlay) {
