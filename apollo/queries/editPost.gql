@@ -1,0 +1,5 @@
+mutation EditPost($post: PostInput) {
+  editPost(input: $post, id:$id) {
+    id
+  }
+}

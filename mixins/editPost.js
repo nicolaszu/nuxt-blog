@@ -10,5 +10,10 @@ export default {
       type: Object,
       required: false
     }
+  },
+  watch: {
+    editContent() {
+      this.mutableContent = JSON.parse(JSON.stringify(this.editContent));
+    }
   }
 };

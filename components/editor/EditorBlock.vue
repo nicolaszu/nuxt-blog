@@ -5,7 +5,7 @@
         <!-- eslint-disable -->
         <!-- weird glitch here, using mutableContent.title throws error <!-->
         <input
-          v-model="editContent ? mutableContent['title'] : title"
+          v-model="titleComputed"
           placeholder="Title"
           class="title"
           type="text"
@@ -19,6 +19,9 @@
             <bubble-menu :editor="editor" />
             <editor-content class="editor editor__content" :editor="editor" />
           </div>
+          <content-placeholders class="editor" rounded slot="placeholder">
+            <content-placeholders-text :lines="10" />
+          </content-placeholders>
         </client-only>
       </div>
     </template>
@@ -80,6 +83,36 @@ export default {
       html: ""
     };
   },
+  computed: {
+    titleComputed: {
+      get() {
+        return this.mutableContent.title
+          ? this.mutableContent.title
+          : this.title;
+      },
+      set(val) {
+        if (this.mutableContent) {
+          this.mutableContent.title = val;
+        } else {
+          this.title = val;
+        }
+      }
+    },
+    htmlComputed: {
+      get() {
+        return this.mutableContent.htmlContent
+          ? this.mutableContent.htmlContent
+          : this.html;
+      },
+      set(val) {
+        if (this.mutableContent) {
+          this.mutableContent.htmlContent = val;
+        } else {
+          this.html = val;
+        }
+      }
+    }
+  },
   mounted() {
     this.editor = new Editor({
       extensions: [
@@ -125,13 +158,8 @@ export default {
         new TableRow()
       ],
       onUpdate: ({ getHTML }) => {
-        if (this.editContent) {
-          this.mutableContent.html = getHTML();
-        } else {
-          this.html = getHTML();
-        }
-      },
-      content: this.mutableContent.html
+        this.htmlComputed = getHTML();
+      }
     });
   },
 
@@ -140,25 +168,32 @@ export default {
   },
   methods: {
     // eslint-disable-next-line
-    async emitOnPublish() {
+    async emitOnSave() {
       await this.validate();
-      this.$emit("publish", { htmlContent: this.html, title: this.title });
+      this.$emit("save", {
+        htmlContent: this.htmlComputed,
+        title: this.titleComputed
+      });
     },
-
     validate() {
-      if (!this.title) {
+      if (!this.titleComputed) {
         const error = "Please enter a title";
         throw error;
       }
-      if (!this.html) {
+      if (!this.htmlComputed) {
         const error = "Looks like you forgot to write a post";
         throw error;
       }
     },
     clearContent() {
-      this.title = "";
-      this.html = "";
+      this.htmlComputed = "";
+      this.htmlComputed = "";
       this.editor.clearContent();
+    }
+  },
+  watch: {
+    "editContent.htmlContent"() {
+      this.editor.setContent(this.htmlComputed);
     }
   }
 };
@@ -273,5 +308,12 @@ input:focus {
 
 ::v-deep .ProseMirror:focus {
   outline: none;
+}
+
+::v-deep .vue-content-placeholders-text__line {
+  width: 100% !important;
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 </style>

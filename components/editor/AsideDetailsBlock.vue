@@ -1,20 +1,16 @@
 <template>
   <aside>
     <template>
-      <div :class="{ required: !postMeta.author && validating }">
+      <div :class="{ required: !authorComputed && validating }">
         <p class="section-title">* Author</p>
         <!-- eslint-disable -->
-        <input
-          v-model="editContent ? mutableContent.author : postMeta.author"
-          type="text"
-          class="width-100"
-        />
+        <input v-model="authorComputed" type="text" class="width-100" />
         <!-- eslint-enable -->
       </div>
 
       <div
         :class="{
-          required: !postMeta.description && validating,
+          required: !descriptionComputed && validating,
           error: maxDescriptionReached
         }"
       >
@@ -23,15 +19,13 @@
           <div>
             <span v-if="maxDescriptionReached" class="error">Too long</span>
             <span>
-              ({{ postMeta.description.length }}/{{ maxDescription }})
+              ({{ descriptionComputed.length }}/{{ maxDescription }})
             </span>
           </div>
         </span>
         <!-- eslint-disable -->
         <textarea
-          v-model="
-            editContent ? mutableContent.description : postMeta.description
-          "
+          v-model="descriptionComputed"
           class="width-100"
           name="description"
           rows="3"
@@ -41,22 +35,25 @@
       </div>
 
       <div>
+        <span class="section-title ">
+          Tags
+          <div>
+            <span v-if="maxTagsReached" class="complete">limit reached</span>
+            <span :class="{ complete: maxTagsReached }">
+              ({{ postMeta.tags.length }}/{{ maxTags }})
+            </span>
+          </div>
+        </span>
         <client-only>
-          <span @click="addExistingTags" class="section-title ">
-            Tags
-            <div>
-              <span v-if="maxTagsReached" class="complete">limit reached</span>
-              <span :class="{ complete: maxTagsReached }">
-                ({{ postMeta.tags.length }}/{{ maxTags }})
-              </span>
-            </div>
-          </span>
           <vue-tags-input
             ref="tag_input"
             v-model="tag"
             :max-tags="maxTags"
             @tags-changed="updateTags"
           />
+          <content-placeholders rounded slot="placeholder">
+            <content-placeholders-text :lines="1" />
+          </content-placeholders>
         </client-only>
       </div>
 
@@ -69,6 +66,7 @@
           :destroyDropzone="true"
           :use-custom-content="true"
           @vdropzone-file-added="imageAdded"
+          @vdropzone-mounted="vmounted"
         >
           <div class="dropzone-custom-content">
             <add-file-icon />
@@ -135,10 +133,38 @@ export default {
       return false;
     },
     maxDescriptionReached() {
-      if (this.postMeta.description.length > this.maxDescription) {
+      if (this.descriptionComputed.length > this.maxDescription) {
         return true;
       }
       return false;
+    },
+    authorComputed: {
+      get() {
+        return this.mutableContent.author
+          ? this.mutableContent.author
+          : this.postMeta.author;
+      },
+      set(val) {
+        if (this.mutableContent) {
+          this.mutableContent.author = val;
+        } else {
+          this.postMeta.author = val;
+        }
+      }
+    },
+    descriptionComputed: {
+      get() {
+        return this.mutableContent.description
+          ? this.mutableContent.description
+          : this.postMeta.description;
+      },
+      set(val) {
+        if (this.mutableContent) {
+          this.mutableContent.description = val;
+        } else {
+          this.postMeta.description = val;
+        }
+      }
     }
   },
   watch: {
@@ -147,6 +173,13 @@ export default {
       this.$refs.tag_input.$refs.newTagInput.placeholder = isMax
         ? ""
         : "Add Tag";
+    },
+    "editContent.coverImage"() {
+      if (this.mutableContent.coverImage) {
+        // const mockFile = { name: "Filename", size: 12345 };
+        const file = { size: 123, name: "Icon", type: "image/png" };
+        this.$refs.el.manuallyAddFile(file, this.mutableContent.coverImage);
+      }
     }
   },
   mounted() {
@@ -155,7 +188,11 @@ export default {
   },
   methods: {
     updateTags(tags) {
-      this.postMeta.tags = tags.map((tag) => tag.text);
+      if (this.mutableContent) {
+        this.mutableContent.tags = tags.map((tag) => tag.text);
+      } else {
+        this.postMeta.tags = tags.map((tag) => tag.text);
+      }
     },
     removeTags() {
       for (
@@ -165,12 +202,6 @@ export default {
       ) {
         this.$refs.tag_input.deleteTag(index);
       }
-    },
-    addExistingTags() {
-      console.log(this.$refs.tag_input);
-      this.mutableContent.tags.forEach((tag) => {
-        console.log(this.$refs.tag_input);
-      });
     },
     imageAdded(file) {
       this.fileImage = file;
@@ -201,12 +232,25 @@ export default {
         this.postMeta.coverImage = await this.uploadImageAzure(this.fileImage);
       }
       this.postMeta.dateCreated = this.$moment().format("yyyy-MM-DD");
-      this.$emit("publish", this.postMeta);
+      this.$emit("save", this.postMeta);
+    },
+    async emitOnEdit() {
+      await this.validate();
+      if (this.fileImage && !this.fileImage.manuallyAdded) {
+        this.mutableContent.coverImage = await this.uploadImageAzure(
+          this.fileImage
+        );
+      }
+      this.$emit("save", {
+        author: this.mutableContent.author,
+        description: this.mutableContent.description,
+        coverImage: this.mutableContent.coverImage
+      });
     },
 
     validate() {
       this.validating = true;
-      if (!this.postMeta.author || !this.postMeta.description) {
+      if (!this.authorComputed || !this.descriptionComputed) {
         const err = "Please fill in details";
         throw err;
       } else if (this.maxDescriptionReached) {
@@ -218,6 +262,13 @@ export default {
       Object.assign(this.$data, this.$options.data.apply(this));
       this.$refs.el.dropzone.removeAllFiles();
       this.removeTags();
+    },
+    vmounted() {
+      if (this.mutableContent.coverImage) {
+        // const mockFile = { name: "Filename", size: 12345 };
+        const file = { size: 123, name: "Icon", type: "image/png" };
+        this.$refs.el.manuallyAddFile(file, this.mutableContent.coverImage);
+      }
     }
   }
 };
@@ -252,6 +303,9 @@ export default {
     font-size: $text-xs;
     .browse {
       color: $primary-color;
+    }
+    .warning {
+      color: red;
     }
   }
 }
@@ -322,5 +376,11 @@ textarea {
 .error p,
 .error span {
   color: red;
+}
+
+::v-deep .vue-content-placeholders-text__line {
+  width: 100% !important;
+  padding: 1rem;
+  border-radius: 6px;
 }
 </style>

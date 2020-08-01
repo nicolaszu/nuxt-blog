@@ -4,18 +4,26 @@
       <editor-block
         ref="editor"
         class="article-block"
-        @publish="saveContent"
-        @edit="editContent"
-        :editContent="editContent"
+        @save="saveContent"
+        :editContent="editContent.post"
       />
       <div class="aside-username-wrapper">
         <div class="aside-username-block">
           <aside-details-block
             ref="meta"
-            @publish="saveMeta"
-            :editContent="editContent"
+            @save="saveMeta"
+            :editContent="editContent.post"
           />
-          <button class="publish-button" @click="publish">Publish</button>
+          <button
+            v-if="!editContent.post"
+            class="publish-button"
+            @click="publish"
+          >
+            Publish
+          </button>
+          <button v-else class="publish-button" @click="edit">
+            Save Changes
+          </button>
         </div>
       </div>
     </div>
@@ -27,23 +35,46 @@ import EditorBlock from "@/components/editor/EditorBlock";
 import AsideDetailsBlock from "@/components/editor/AsideDetailsBlock";
 
 import addPost from "~/apollo/queries/addPost";
+import editPost from "~/apollo/queries/editPost";
+
+import post from "~/apollo/queries/post";
 
 export default {
   components: {
     EditorBlock,
     AsideDetailsBlock
   },
+  apollo: {
+    editContent: {
+      prefetch: false,
+      query: post,
+      variables() {
+        return {
+          id: this.editPostId
+        };
+      },
+      skip() {
+        return this.skipEditQuery;
+      },
+      update: (data) => data,
+      error(error) {
+        this.$modal.show({ message: error, variant: "error" });
+      }
+    }
+  },
   data() {
     return {
       post: {},
-      editContent: {
-        titles: "hello",
-        html: "<p>hi</p>",
-        author: "Nick",
-        description: "hello",
-        tags: ["tag"]
-      }
+      skipEditQuery: true,
+      editPostId: this.$route.query.edit,
+      editContent: {}
     };
+  },
+  mounted() {
+    if (this.editPostId) {
+      this.$apollo.queries.editContent.skip = false;
+      this.$apollo.queries.editContent.refetch();
+    }
   },
   methods: {
     saveMeta(meta) {
@@ -58,8 +89,8 @@ export default {
     async publish() {
       try {
         this.$root.$loading.start();
-        await this.$refs.meta.emitOnPublish();
-        await this.$refs.editor.emitOnPublish();
+        await this.$refs.meta.emitOnSave();
+        await this.$refs.editor.emitOnSave();
         const postResp = await this.$apollo.mutate({
           mutation: addPost,
           variables: {
@@ -72,6 +103,30 @@ export default {
         this.$router.push({
           name: "post",
           params: { post: postResp.data.addPost.id }
+        });
+      } catch (err) {
+        this.handleError(err);
+      } finally {
+        this.$root.$loading.finish();
+      }
+    },
+    async edit() {
+      try {
+        this.$root.$loading.start();
+        await this.$refs.meta.emitOnSave();
+        await this.$refs.editor.emitOnSave();
+        const postResp = await this.$apollo.mutate({
+          mutation: editPost,
+          variables: {
+            post: this.post
+          }
+        });
+        this.$refs.meta.clearContent();
+        this.$refs.editor.clearContent();
+        this.$modal.show({ message: "Post Updated", variant: "success" });
+        this.$router.push({
+          name: "post",
+          params: { post: postResp.data.editPost.id }
         });
       } catch (err) {
         this.handleError(err);

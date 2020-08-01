@@ -103,7 +103,10 @@ export default {
       }
     },
     editPost() {
-      console.log("edit");
+      this.$router.push({
+        name: "create",
+        query: { edit: this.$route.params.post }
+      });
     }
   },
 
