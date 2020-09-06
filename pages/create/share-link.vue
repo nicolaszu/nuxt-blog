@@ -112,8 +112,7 @@ export default {
             id: this.editPostId
           }
         });
-        this.$refs.meta.clearContent();
-        this.$refs.editor.clearContent();
+
         this.$toast.show({ message: "Post Updated", variant: "success" });
         this.$router.push({
           name: "post",

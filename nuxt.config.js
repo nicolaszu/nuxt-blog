@@ -53,7 +53,7 @@ export default {
     { src: "~/plugins/vue-azure-blob-upload.js", mode: "client", ssr: false },
     "~/plugins/http",
     "~/plugins/apollo-error-handler.js",
-    "~/plugins/basics-components.js",
+    "~/plugins/utility-components.js",
     "~/plugins/highlight.js",
     "~/plugins/globalMixin.js"
   ],
