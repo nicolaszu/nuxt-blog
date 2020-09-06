@@ -1,9 +1,10 @@
 <template>
   <header :class="[navHide, navShadow]">
+    <create-modal v-show="modalCreateShow" @close="modalCreateShow = false" />
     <nav>
       <ul>
         <nuxt-link to="/" class="logo-wrapper">
-          Blok.
+          {{ appName }}
         </nuxt-link>
         <li v-for="link in links" :key="link.name">
           <nuxt-link
@@ -23,16 +24,16 @@
             ref="search"
             type="text"
             v-model="searchQuery"
-            placeholder="Search Blok..."
+            :placeholder="`Search ${appName}...`"
             @keyup.enter="search()"
           />
           <closeIcon class="bigger-svg" @click="searchOverlay = false" />
         </template>
       </ul>
-      <nuxt-link to="create" tag="span">
-        Write a Post
-        <penIcon />
-      </nuxt-link>
+      <span @click="modalCreateShow = true">
+        Create a Post
+        <pen-icon />
+      </span>
     </nav>
     <transition name="fade" duration="2000">
       <div
@@ -45,12 +46,13 @@
 </template>
 
 <script>
-import penIcon from "@/assets/icons/pen.svg?inline";
-import searchIcon from "@/assets/icons/search.svg?inline";
-import closeIcon from "@/assets/icons/close.svg?inline";
+import penIcon from "@/assets/icons/utility/pen.svg?inline";
+import searchIcon from "@/assets/icons/utility/search.svg?inline";
+import closeIcon from "@/assets/icons/utility/close.svg?inline";
+import createModal from "@/components/create/CreateModal";
 
 export default {
-  components: { penIcon, searchIcon, closeIcon },
+  components: { searchIcon, closeIcon, penIcon, createModal },
   data() {
     return {
       links: [
@@ -64,7 +66,8 @@ export default {
       headerIsHidden: false,
       headerHasShadow: false,
       searchOverlay: false,
-      searchQuery: ""
+      searchQuery: "",
+      modalCreateShow: false
     };
   },
   computed: {
@@ -102,7 +105,7 @@ export default {
     handleScroll() {
       const currentScrollPosition =
         window.pageYOffset || document.documentElement.scrollTop;
-      if (currentScrollPosition < 0) {
+      if (currentScrollPosition < 0 || this.modalCreateShow) {
         return;
       }
 
@@ -255,5 +258,11 @@ header {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+.dropdown {
+  // position: absolute;
+  background: white;
+  display: flex;
+  gap: 10px;
 }
 </style>

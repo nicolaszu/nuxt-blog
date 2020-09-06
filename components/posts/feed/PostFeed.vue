@@ -16,6 +16,11 @@
     <template v-else-if="error">
       error
     </template>
+    <template v-else-if="!loading && !posts.length">
+      <div class="article-cards-wrapper">
+        Oops...Looks like there are no matches
+      </div>
+    </template>
     <template v-else>
       <div class="article-cards-wrapper">
         <post-info-card
@@ -27,7 +32,8 @@
         />
       </div>
     </template>
-    <template v-if="loading && posts.length">
+
+    <!-- <template v-if="loading && posts.length">
       <div class="article-cards-wrapper">
         <content-placeholders
           v-for="p in 9"
@@ -39,12 +45,12 @@
           <content-placeholders-text :lines="3" />
         </content-placeholders>
       </div>
-    </template>
+    </template> -->
   </div>
 </template>
 
 <script>
-import PostInfoCard from "@/components/posts/PostInfoCard";
+import PostInfoCard from "@/components/posts/feed/PostInfoCard";
 
 export default {
   components: {

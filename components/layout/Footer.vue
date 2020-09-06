@@ -1,0 +1,87 @@
+<template>
+  <footer class="grid-container">
+    <tooltip :tip="version" class="websiteName">
+      {{ appName }}
+    </tooltip>
+    <div class="contributeLink">Contribute on <githubIcon /></div>
+    <div class="contactUs">Contact Us</div>
+  </footer>
+</template>
+
+<script>
+import githubIcon from "@/assets/icons/logos/github.svg?inline";
+export default {
+  components: { githubIcon },
+  computed: {
+    version() {
+      return process.env.version;
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+footer {
+  padding: 1.5rem 2rem 1rem 2rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: 128px;
+  display: inline-block;
+  line-height: 1;
+  letter-spacing: $-ls2;
+  font-size: $text-xs;
+  background: white;
+  &.dark {
+    background: #16161a;
+    color: white;
+  }
+  &.light {
+    background: #f4f4f4;
+    color: #16161a;
+  }
+  a {
+    svg {
+      width: 3rem;
+      height: 3rem;
+      margin: 0 0.5rem;
+    }
+    .nuxt-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      margin: 0 0.25rem;
+    }
+  }
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: "websiteName . contactUs" "contributeLink . contactUs";
+}
+
+.websiteName {
+  grid-area: websiteName;
+  text-align: left;
+  font-weight: 700;
+}
+
+.contributeLink {
+  grid-area: contributeLink;
+  font-weight: 700;
+  color: $gray-color;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contactUs {
+  grid-area: contactUs;
+  font-weight: 300;
+  color: #1e96e7;
+  text-align: right;
+}
+</style>

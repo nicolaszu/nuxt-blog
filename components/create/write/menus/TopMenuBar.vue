@@ -152,30 +152,30 @@
 <script>
 import { EditorMenuBar } from "tiptap";
 
-import QuotesIcon from "@/assets/icons/editor/quotes.svg?inline";
-import BoldIcon from "@/assets/icons/editor/bold.svg?inline";
-import Header1Icon from "@/assets/icons/editor/header1.svg?inline";
-import Header2Icon from "@/assets/icons/editor/header2.svg?inline";
-import Header3Icon from "@/assets/icons/editor/header3.svg?inline";
-import listUnorderIcon from "@/assets/icons/editor/listUnorder.svg?inline";
-import listOrderIcon from "@/assets/icons/editor/listOrder.svg?inline";
-import codeIcon from "@/assets/icons/editor/code.svg?inline";
-import UnderlineIcon from "@/assets/icons/editor/underline.svg?inline";
-import SeperatorIcon from "@/assets/icons/editor/seperator.svg?inline";
-import StrikeIcon from "@/assets/icons/editor/strike.svg?inline";
-import ItalicsIcon from "@/assets/icons/editor/italics.svg?inline";
-import RedoIcon from "@/assets/icons/editor/redo.svg?inline";
-import UndoIcon from "@/assets/icons/editor/undo.svg?inline";
-import ParagraphIcon from "@/assets/icons/editor/paragraph.svg?inline";
-import TableIcon from "@/assets/icons/editor/table.svg?inline";
-import deleteTable from "@/assets/icons/editor/deleteTable.svg?inline";
-import addColAfter from "@/assets/icons/editor/addColAfter.svg?inline";
-import addColBefore from "@/assets/icons/editor/addColBefore.svg?inline";
-import addRowAfter from "@/assets/icons/editor/addRowAfter.svg?inline";
-import addRowBefore from "@/assets/icons/editor/addRowBefore.svg?inline";
-import deleteCol from "@/assets/icons/editor/deleteCol.svg?inline";
-import deleteRow from "@/assets/icons/editor/deleteRow.svg?inline";
-import combineCells from "@/assets/icons/editor/combineCells.svg?inline";
+import QuotesIcon from "@/assets/icons/editor-menu/quotes.svg?inline";
+import BoldIcon from "@/assets/icons/editor-menu/bold.svg?inline";
+import Header1Icon from "@/assets/icons/editor-menu/header1.svg?inline";
+import Header2Icon from "@/assets/icons/editor-menu/header2.svg?inline";
+import Header3Icon from "@/assets/icons/editor-menu/header3.svg?inline";
+import listUnorderIcon from "@/assets/icons/editor-menu/listUnorder.svg?inline";
+import listOrderIcon from "@/assets/icons/editor-menu/listOrder.svg?inline";
+import codeIcon from "@/assets/icons/editor-menu/code.svg?inline";
+import UnderlineIcon from "@/assets/icons/editor-menu/underline.svg?inline";
+import SeperatorIcon from "@/assets/icons/editor-menu/seperator.svg?inline";
+import StrikeIcon from "@/assets/icons/editor-menu/strike.svg?inline";
+import ItalicsIcon from "@/assets/icons/editor-menu/italics.svg?inline";
+import RedoIcon from "@/assets/icons/editor-menu/redo.svg?inline";
+import UndoIcon from "@/assets/icons/editor-menu/undo.svg?inline";
+import ParagraphIcon from "@/assets/icons/editor-menu/paragraph.svg?inline";
+import TableIcon from "@/assets/icons/editor-menu/table.svg?inline";
+import deleteTable from "@/assets/icons/editor-menu/deleteTable.svg?inline";
+import addColAfter from "@/assets/icons/editor-menu/addColAfter.svg?inline";
+import addColBefore from "@/assets/icons/editor-menu/addColBefore.svg?inline";
+import addRowAfter from "@/assets/icons/editor-menu/addRowAfter.svg?inline";
+import addRowBefore from "@/assets/icons/editor-menu/addRowBefore.svg?inline";
+import deleteCol from "@/assets/icons/editor-menu/deleteCol.svg?inline";
+import deleteRow from "@/assets/icons/editor-menu/deleteRow.svg?inline";
+import combineCells from "@/assets/icons/editor-menu/combineCells.svg?inline";
 
 export default {
   components: {

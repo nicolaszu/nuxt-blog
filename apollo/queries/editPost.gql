@@ -1,4 +1,4 @@
-mutation EditPost($post: PostInput) {
+mutation EditPost($post: PostInput, $id:ID) {
   editPost(input: $post, id:$id) {
     id
   }

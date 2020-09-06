@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import errorIcon from "@/assets/icons/error.svg?inline";
-import successIcon from "@/assets/icons/checkbox-circle.svg?inline";
-import closeIcon from "@/assets/icons/close.svg?inline";
-import Modal from "@/plugins/modal";
+import errorIcon from "@/assets/icons/notification/error.svg?inline";
+import successIcon from "@/assets/icons/notification/checkbox-circle-fill.svg?inline";
+import closeIcon from "@/assets/icons/utility/close.svg?inline";
+import Modal from "@/plugins/basics-components";
 
 export default {
   components: {

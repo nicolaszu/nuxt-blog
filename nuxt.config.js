@@ -1,8 +1,15 @@
+const fs = require("fs");
+const packageJson = fs.readFileSync("./package.json");
+const version = JSON.parse(packageJson).version || "1.0.0";
+
 export default {
   mode: "universal",
   /*
    ** Headers of the page
    */
+  env: {
+    version
+  },
   head: {
     title: process.env.npm_package_name || "",
     meta: [
@@ -46,8 +53,9 @@ export default {
     { src: "~/plugins/vue-azure-blob-upload.js", mode: "client", ssr: false },
     "~/plugins/http",
     "~/plugins/apollo-error-handler.js",
-    "~/plugins/modal.js",
-    "~/plugins/highlight.js"
+    "~/plugins/basics-components.js",
+    "~/plugins/highlight.js",
+    "~/plugins/globalMixin.js"
   ],
   /*
    ** Nuxt.js dev-modules

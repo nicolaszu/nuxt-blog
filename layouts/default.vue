@@ -1,21 +1,20 @@
 <template>
   <div>
     <toast :error="'error'" @close="error = null" />
-
     <the-header />
-    <nuxt keep-alive class="relative" />
+    <nuxt class="relative" />
     <the-footer />
   </div>
 </template>
 
 <script>
-import TheHeader from "@/components/TheHeader";
-import TheFooter from "@/components/TheFooter";
+import theHeader from "@/components/layout/Header";
+import theFooter from "@/components/layout/Footer";
 
 export default {
   components: {
-    TheHeader,
-    TheFooter
+    theHeader,
+    theFooter
   }
 };
 </script>

@@ -1,12 +1,6 @@
 <template>
   <div class="page-wrapper">
     <div class="article-content-wrapper">
-      <editor-block
-        ref="editor"
-        class="article-block"
-        @save="saveContent"
-        :editContent="editContent.post"
-      />
       <div class="aside-username-wrapper">
         <div class="aside-username-block">
           <aside-details-block
@@ -31,8 +25,7 @@
 </template>
 
 <script>
-import EditorBlock from "@/components/editor/EditorBlock";
-import AsideDetailsBlock from "@/components/editor/AsideDetailsBlock";
+import AsideDetailsBlock from "@/components/create/AsideDetailsBlock";
 
 import addPost from "~/apollo/queries/addPost";
 import editPost from "~/apollo/queries/editPost";
@@ -41,7 +34,6 @@ import post from "~/apollo/queries/post";
 
 export default {
   components: {
-    EditorBlock,
     AsideDetailsBlock
   },
   apollo: {
@@ -58,7 +50,7 @@ export default {
       },
       update: (data) => data,
       error(error) {
-        this.$modal.show({ message: error, variant: "error" });
+        this.$toast.show({ message: error, variant: "error" });
       }
     }
   },
@@ -84,7 +76,7 @@ export default {
       this.post = { ...this.post, ...content };
     },
     handleError(err) {
-      this.$modal.show({ message: err, variant: "error" });
+      this.$toast.show({ message: err, variant: "error" });
     },
     async publish() {
       try {
@@ -97,9 +89,7 @@ export default {
             post: this.post
           }
         });
-        this.$refs.meta.clearContent();
-        this.$refs.editor.clearContent();
-        this.$modal.show({ message: "Post Created", variant: "success" });
+        this.$toast.show({ message: "Post Created", variant: "success" });
         this.$router.push({
           name: "post",
           params: { post: postResp.data.addPost.id }
@@ -118,12 +108,13 @@ export default {
         const postResp = await this.$apollo.mutate({
           mutation: editPost,
           variables: {
-            post: this.post
+            post: this.post,
+            id: this.editPostId
           }
         });
         this.$refs.meta.clearContent();
         this.$refs.editor.clearContent();
-        this.$modal.show({ message: "Post Updated", variant: "success" });
+        this.$toast.show({ message: "Post Updated", variant: "success" });
         this.$router.push({
           name: "post",
           params: { post: postResp.data.editPost.id }

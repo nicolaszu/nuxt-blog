@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import downArrowIcon from "@/assets/icons/down-arrow.svg?inline";
+import downArrowIcon from "@/assets/icons/utility/down-arrow.svg?inline";
 
 export default {
   components: { downArrowIcon },

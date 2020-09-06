@@ -15,7 +15,7 @@
       <div class="content">
         <client-only>
           <div class="editor">
-            <top-menu :editor="editor" />
+            <top-menu-bar :editor="editor" />
             <bubble-menu :editor="editor" />
             <editor-content class="editor editor__content" :editor="editor" />
           </div>
@@ -66,15 +66,15 @@ import django from "highlight.js/lib/languages/django";
 import yaml from "highlight.js/lib/languages/yaml";
 import htmlbars from "highlight.js/lib/languages/htmlbars";
 
-import BubbleMenu from "@/components/editor/bubbleMenu";
-import TopMenu from "@/components/editor/topMenu";
+import bubbleMenu from "@/components/create/write/menus/BubbleMenu";
+import topMenuBar from "@/components/create/write/menus/topMenuBar";
 import editPost from "@/mixins/editPost";
 export default {
   mixins: [editPost],
   components: {
     EditorContent,
-    BubbleMenu,
-    TopMenu
+    bubbleMenu,
+    topMenuBar
   },
   data() {
     return {
@@ -86,12 +86,10 @@ export default {
   computed: {
     titleComputed: {
       get() {
-        return this.mutableContent.title
-          ? this.mutableContent.title
-          : this.title;
+        return this.isEditing ? this.mutableContent.title : this.title;
       },
       set(val) {
-        if (this.mutableContent) {
+        if (this.isEditing) {
           this.mutableContent.title = val;
         } else {
           this.title = val;
@@ -100,12 +98,10 @@ export default {
     },
     htmlComputed: {
       get() {
-        return this.mutableContent.htmlContent
-          ? this.mutableContent.htmlContent
-          : this.html;
+        return this.isEditing ? this.mutableContent.htmlContent : this.html;
       },
       set(val) {
-        if (this.mutableContent) {
+        if (this.isEditing) {
           this.mutableContent.htmlContent = val;
         } else {
           this.html = val;
@@ -184,11 +180,6 @@ export default {
         const error = "Looks like you forgot to write a post";
         throw error;
       }
-    },
-    clearContent() {
-      this.htmlComputed = "";
-      this.htmlComputed = "";
-      this.editor.clearContent();
     }
   },
   watch: {

@@ -15,5 +15,13 @@ export default {
     editContent() {
       this.mutableContent = JSON.parse(JSON.stringify(this.editContent));
     }
+  },
+  computed: {
+    isEditing() {
+      if (Object.keys(this.mutableContent).length === 0) {
+        return false;
+      }
+      return true;
+    }
   }
 };

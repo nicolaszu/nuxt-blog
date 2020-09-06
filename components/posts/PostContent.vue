@@ -14,7 +14,7 @@
       <header>
         <h1>{{ post.title }}</h1>
         <div class="info">
-          <span class="item">Nicolas Zuluaga •</span>
+          <span class="item">{{ post.author }} •</span>
           <time class="item">
             {{ $moment(post.dateCreated).format("MMM Do, YYYY ") }}
           </time>
@@ -53,8 +53,8 @@
 <script>
 import post from "~/apollo/queries/post";
 import deletePost from "~/apollo/queries/deletePost";
-import dropdown from "~/components/Dropdown";
-import deleteIcon from "@/assets/icons/delete.svg?inline";
+import dropdown from "~/components/utilities/Dropdown";
+import deleteIcon from "@/assets/icons/utility/delete.svg?inline";
 
 export default {
   components: { dropdown, deleteIcon },
@@ -94,17 +94,17 @@ export default {
             id: this.$route.params.post
           }
         });
-        this.$modal.show({ message: "Post Deleted", variant: "success" });
+        this.$toast.show({ message: "Post Deleted", variant: "success" });
         this.$router.push({
           name: "index"
         });
       } catch (e) {
-        this.$modal.show({ message: e, variant: "error" });
+        this.$toast.show({ message: e, variant: "error" });
       }
     },
     editPost() {
       this.$router.push({
-        name: "create",
+        name: "create-write",
         query: { edit: this.$route.params.post }
       });
     }

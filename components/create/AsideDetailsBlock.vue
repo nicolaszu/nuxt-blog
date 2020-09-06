@@ -40,7 +40,7 @@
           <div>
             <span v-if="maxTagsReached" class="complete">limit reached</span>
             <span :class="{ complete: maxTagsReached }">
-              ({{ postMeta.tags.length }}/{{ maxTags }})
+              ({{ tagsComputed.length }}/{{ maxTags }})
             </span>
           </div>
         </span>
@@ -50,6 +50,7 @@
             v-model="tag"
             :max-tags="maxTags"
             @tags-changed="updateTags"
+            :tags="tagsComputed"
           />
           <content-placeholders rounded slot="placeholder">
             <content-placeholders-text :lines="1" />
@@ -65,8 +66,8 @@
           :options="options"
           :destroyDropzone="true"
           :use-custom-content="true"
+          @vdropzone-removed-file="imageDeleted"
           @vdropzone-file-added="imageAdded"
-          @vdropzone-mounted="vmounted"
         >
           <div class="dropzone-custom-content">
             <add-file-icon />
@@ -86,7 +87,7 @@
 <script>
 import Dropzone from "nuxt-dropzone";
 import "nuxt-dropzone/dropzone.css";
-import AddFileIcon from "@/assets/icons/editor/addFile.svg?inline";
+import AddFileIcon from "@/assets/icons/editor-menu/addFile.svg?inline";
 import editPost from "@/mixins/editPost";
 
 let VueTagsInput;
@@ -122,12 +123,13 @@ export default {
         dateCreated: ""
       },
       validating: false,
-      maxDescription: 100
+      maxDescription: 100,
+      noEditedImage: false
     };
   },
   computed: {
     maxTagsReached() {
-      if (this.postMeta.tags.length === this.maxTags) {
+      if (this.tagsComputed.length === this.maxTags) {
         return true;
       }
       return false;
@@ -140,12 +142,12 @@ export default {
     },
     authorComputed: {
       get() {
-        return this.mutableContent.author
+        return this.isEditing
           ? this.mutableContent.author
           : this.postMeta.author;
       },
       set(val) {
-        if (this.mutableContent) {
+        if (this.isEditing) {
           this.mutableContent.author = val;
         } else {
           this.postMeta.author = val;
@@ -154,15 +156,55 @@ export default {
     },
     descriptionComputed: {
       get() {
-        return this.mutableContent.description
+        return this.isEditing
           ? this.mutableContent.description
           : this.postMeta.description;
       },
       set(val) {
-        if (this.mutableContent) {
+        if (this.isEditing) {
           this.mutableContent.description = val;
         } else {
           this.postMeta.description = val;
+        }
+      }
+    },
+    tagsComputed: {
+      get() {
+        return this.isEditing ? this.mutableContent.tags : this.postMeta.tags;
+      },
+      set(val) {
+        if (this.isEditing) {
+          this.mutableContent.tags = val;
+        } else {
+          this.postMeta.tags = val;
+        }
+      }
+    },
+    dateCreatedComputed: {
+      get() {
+        return this.isEditing
+          ? this.mutableContent.dateCreated
+          : this.postMeta.dateCreated;
+      },
+      set(val) {
+        if (this.isEditing) {
+          // Do not override if editing
+        } else {
+          this.postMeta.dateCreated = val;
+        }
+      }
+    },
+    coverImageComputed: {
+      get() {
+        return this.isEditing
+          ? this.mutableContent.coverImage
+          : this.postMeta.coverImage;
+      },
+      set(val) {
+        if (this.isEditing) {
+          this.mutableContent.coverImage = val;
+        } else {
+          this.postMeta.coverImage = val;
         }
       }
     }
@@ -188,11 +230,7 @@ export default {
   },
   methods: {
     updateTags(tags) {
-      if (this.mutableContent) {
-        this.mutableContent.tags = tags.map((tag) => tag.text);
-      } else {
-        this.postMeta.tags = tags.map((tag) => tag.text);
-      }
+      this.tagsComputed = tags.map((tag) => tag.text);
     },
     removeTags() {
       for (
@@ -205,6 +243,14 @@ export default {
     },
     imageAdded(file) {
       this.fileImage = file;
+      if (this.isEditing) {
+        this.noEditedImage = false;
+      }
+    },
+    imageDeleted() {
+      if (this.isEditing) {
+        this.noEditedImage = true;
+      }
     },
     async uploadImageAzure(fileToUpload) {
       const time = this.$moment().unix();
@@ -226,28 +272,23 @@ export default {
       await this.$azureUpload(config, this.$http);
       return `${process.env.baseUrl}${random}${imgName}${time}.${extension}`;
     },
-    async emitOnPublish() {
-      await this.validate();
-      if (this.fileImage) {
-        this.postMeta.coverImage = await this.uploadImageAzure(this.fileImage);
-      }
-      this.postMeta.dateCreated = this.$moment().format("yyyy-MM-DD");
-      this.$emit("save", this.postMeta);
-    },
-    async emitOnEdit() {
+    async emitOnSave() {
       await this.validate();
       if (this.fileImage && !this.fileImage.manuallyAdded) {
-        this.mutableContent.coverImage = await this.uploadImageAzure(
-          this.fileImage
-        );
+        this.coverImageComputed = await this.uploadImageAzure(this.fileImage);
       }
+      if (this.noEditedImage) {
+        this.coverImageComputed = "Delete"; // Notifies backend that image must be delete. Do not change 'Delete', it looks for exact match.
+      }
+      this.dateCreatedComputed = this.$moment().format("yyyy-MM-DD");
       this.$emit("save", {
-        author: this.mutableContent.author,
-        description: this.mutableContent.description,
-        coverImage: this.mutableContent.coverImage
+        author: this.authorComputed,
+        description: this.descriptionComputed,
+        coverImage: this.coverImageComputed,
+        dateCreated: this.dateCreatedComputed,
+        tags: this.tagsComputed
       });
     },
-
     validate() {
       this.validating = true;
       if (!this.authorComputed || !this.descriptionComputed) {
@@ -256,18 +297,6 @@ export default {
       } else if (this.maxDescriptionReached) {
         const err = "Description is too long";
         throw err;
-      }
-    },
-    clearContent() {
-      Object.assign(this.$data, this.$options.data.apply(this));
-      this.$refs.el.dropzone.removeAllFiles();
-      this.removeTags();
-    },
-    vmounted() {
-      if (this.mutableContent.coverImage) {
-        // const mockFile = { name: "Filename", size: 12345 };
-        const file = { size: 123, name: "Icon", type: "image/png" };
-        this.$refs.el.manuallyAddFile(file, this.mutableContent.coverImage);
       }
     }
   }

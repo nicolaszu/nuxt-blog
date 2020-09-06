@@ -3,8 +3,8 @@
     <div class="search-wrapper">
       <h2>Search:</h2>
       <input
-        v-model="searchQuery"
-        placeholder="Search Blok..."
+        v-model="searchInput"
+        :placeholder="`Search ${appName}...`"
         type="text"
         ref="search"
         @keyup.enter="newSearch"
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import postFeed from "@/components/posts/PostFeed";
+import postFeed from "@/components/posts/feed/PostFeed";
 
 import searchPosts from "~/apollo/queries/searchPosts";
 const limit = 6;
@@ -100,7 +100,7 @@ export default {
             }
           });
         } catch (e) {
-          this.$modal.show({ message: e, variant: "error" });
+          this.$toast.show({ message: e, variant: "error" });
         }
       }
     },

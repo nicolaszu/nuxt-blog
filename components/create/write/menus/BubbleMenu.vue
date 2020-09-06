@@ -38,9 +38,9 @@
 
 <script>
 import { EditorMenuBubble } from "tiptap";
-import BoldIcon from "@/assets/icons/editor/bold.svg?inline";
-import ItalicsIcon from "@/assets/icons/editor/italics.svg?inline";
-import UnderlineIcon from "@/assets/icons/editor/underline.svg?inline";
+import BoldIcon from "@/assets/icons/editor-menu/bold.svg?inline";
+import ItalicsIcon from "@/assets/icons/editor-menu/italics.svg?inline";
+import UnderlineIcon from "@/assets/icons/editor-menu/underline.svg?inline";
 
 export default {
   components: { BoldIcon, EditorMenuBubble, ItalicsIcon, UnderlineIcon },

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import postFeed from "@/components/posts/PostFeed";
+import postFeed from "@/components/posts/feed/PostFeed";
 
 import posts from "~/apollo/queries/posts";
 const limit = 6;
@@ -51,6 +51,9 @@ export default {
       return false;
     }
   },
+  created() {
+    this.$apollo.queries.posts.refetch();
+  },
   methods: {
     async lazyLoadPosts() {
       if (!this.lastPostReached) {
@@ -78,7 +81,7 @@ export default {
             }
           });
         } catch (e) {
-          this.$modal.show({ message: e, variant: "error" });
+          this.$toast.show({ message: e, variant: "error" });
         }
       }
     }
