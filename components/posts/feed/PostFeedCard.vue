@@ -1,11 +1,5 @@
 <template>
-  <nuxt-link
-    :to="{
-      name: 'post',
-      params: { post: post.id }
-    }"
-    tag="article"
-  >
+  <article>
     <div class="image-wrapper">
       <img v-if="post.coverImage" :src="post.coverImage" :alt="post.title" />
       <img
@@ -27,7 +21,7 @@
         </p>
       </div>
     </div>
-  </nuxt-link>
+  </article>
 </template>
 
 <script>

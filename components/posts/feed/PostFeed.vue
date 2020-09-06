@@ -23,7 +23,7 @@
     </template>
     <template v-else>
       <div class="article-cards-wrapper">
-        <post-info-card
+        <post-feed-card-wrapper
           v-for="(post, i) in posts"
           :key="post.id"
           :post="post"
@@ -50,11 +50,11 @@
 </template>
 
 <script>
-import PostInfoCard from "@/components/posts/feed/PostInfoCard";
+import PostFeedCardWrapper from "@/components/posts/feed/PostFeedCardWrapper";
 
 export default {
   components: {
-    PostInfoCard
+    PostFeedCardWrapper
   },
   props: {
     posts: {

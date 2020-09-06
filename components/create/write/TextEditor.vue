@@ -168,7 +168,8 @@ export default {
       await this.validate();
       this.$emit("save", {
         htmlContent: this.htmlComputed,
-        title: this.titleComputed
+        title: this.titleComputed,
+        type: "WRITE"
       });
     },
     validate() {

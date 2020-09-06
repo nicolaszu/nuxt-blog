@@ -7,5 +7,6 @@ query($id: ID) {
     coverImage
     htmlContent
     description
+    urlContent
   }
 }
