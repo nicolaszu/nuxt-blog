@@ -25,7 +25,7 @@
 import errorIcon from "@/assets/icons/notification/error.svg?inline";
 import successIcon from "@/assets/icons/notification/checkbox-circle-fill.svg?inline";
 import closeIcon from "@/assets/icons/utility/close.svg?inline";
-import Modal from "@/plugins/utility-components";
+import Utilities from "@/plugins/utility-components";
 
 export default {
   components: {
@@ -80,7 +80,7 @@ export default {
     }
   },
   beforeMount() {
-    Modal.EventBus.$on("show", (params) => {
+    Utilities.EventBus.$on("show", (params) => {
       this.show(params);
     });
   }

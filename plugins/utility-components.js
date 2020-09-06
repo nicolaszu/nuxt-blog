@@ -2,7 +2,7 @@ import Vue from "vue";
 import Toast from "@/components/utilities/Toast";
 import ToolTip from "@/components/utilities/ToolTip";
 
-const Modal = {
+const Utilities = {
   install(Vue) {
     this.EventBus = new Vue();
 
@@ -11,12 +11,12 @@ const Modal = {
 
     Vue.prototype.$toast = {
       show(params) {
-        Modal.EventBus.$emit("show", params);
+        Utilities.EventBus.$emit("show", params);
       }
     };
   }
 };
 
-Vue.use(Modal);
+Vue.use(Utilities);
 
-export default Modal;
+export default Utilities;
