@@ -91,7 +91,7 @@ export default {
   apollo: {
     clientConfigs: {
       default: {
-        httpEndpoint: "http://localhost:8080/graphql"
+        httpEndpoint: process.env.GraphQLEndpoint
       },
       errorHandler: "~/plugins/apollo-error-handler.js"
     }
