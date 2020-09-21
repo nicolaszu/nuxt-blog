@@ -7,7 +7,7 @@
     <nuxt-link
       v-else
       :to="{
-        name: 'post',
+        name: 'post-post',
         params: { post: post.id }
       }"
       tag="a"

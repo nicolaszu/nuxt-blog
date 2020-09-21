@@ -3,8 +3,10 @@
     <tooltip :tip="version" class="websiteName">
       {{ appName }}
     </tooltip>
-    <div class="contributeLink">Contribute on <githubIcon /></div>
-    <div class="contactUs">Contact Us</div>
+    <a href="https://github.com/nicolaszu/nuxt-blog" class="contributeLink"
+      >Contribute on <githubIcon
+    /></a>
+    <!-- <a class="contactUs">Contact Us</a> -->
   </footer>
 </template>
 
@@ -41,18 +43,6 @@ footer {
   &.light {
     background: #f4f4f4;
     color: #16161a;
-  }
-  a {
-    svg {
-      width: 3rem;
-      height: 3rem;
-      margin: 0 0.5rem;
-    }
-    .nuxt-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      margin: 0 0.25rem;
-    }
   }
 }
 .grid-container {

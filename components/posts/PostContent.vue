@@ -18,7 +18,7 @@
           <time class="item">
             {{ $moment(post.dateCreated).format("MMM Do, YYYY ") }}
           </time>
-          <dropdown
+          <!-- <dropdown
             :options="settingsDropdown"
             class="item"
             @selected="dropdownAction"
@@ -29,7 +29,7 @@
                 <p>Delete Post</p>
               </div>
             </template>
-          </dropdown>
+          </dropdown> -->
         </div>
         <div class="tags">
           <nuxt-link
@@ -53,11 +53,11 @@
 <script>
 import post from "~/apollo/queries/post";
 import deletePost from "~/apollo/queries/deletePost";
-import dropdown from "~/components/utilities/Dropdown";
-import deleteIcon from "@/assets/icons/utility/delete.svg?inline";
+// import dropdown from "~/components/utilities/Dropdown";
+// import deleteIcon from "@/assets/icons/utility/delete.svg?inline";
 
 export default {
-  components: { dropdown, deleteIcon },
+  // components: { dropdown, deleteIcon },
   apollo: {
     post: {
       prefetch: true,

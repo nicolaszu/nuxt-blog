@@ -134,6 +134,12 @@ export default {
         });
       }
       this.searchQuery = "";
+    },
+    login() {
+      this.$auth.loginWith("auth0");
+    },
+    logout() {
+      this.$auth.logout();
     }
   }
 };
