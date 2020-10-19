@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrapper">
+    <post-feed-card-med />
     <post-feed
       :posts="posts"
       :error="error"
@@ -11,12 +12,14 @@
 
 <script>
 import postFeed from "@/components/posts/feed/PostFeed";
+import postFeedCardMed from "@/components/posts/feed/PostFeedCardMed";
 
 import posts from "~/apollo/queries/posts";
 const limit = 6;
 export default {
   components: {
-    postFeed
+    postFeed,
+    postFeedCardMed
   },
   apollo: {
     posts: {

@@ -67,7 +67,8 @@ export default {
     "@nuxtjs/svg",
     "@nuxtjs/apollo",
     "@nuxtjs/moment",
-    "@nuxtjs/dotenv"
+    "@nuxtjs/dotenv",
+    "@nuxtjs/tailwindcss"
   ],
 
   /*
