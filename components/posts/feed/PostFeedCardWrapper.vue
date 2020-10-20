@@ -1,7 +1,7 @@
 <template>
   <div>
     <a v-if="post.type === 'LINK'" :href="post.urlContent">
-      <post-feed-card :post="post" />
+      <post-feed-card-med :post="post" />
     </a>
 
     <nuxt-link
@@ -12,16 +12,17 @@
       }"
       tag="a"
     >
-      <post-feed-card :post="post" />
+      <post-feed-card-med :post="post" />
     </nuxt-link>
   </div>
 </template>
 
 <script>
-import postFeedCard from "@/components/posts/feed/PostFeedCard";
+import postFeedCardMed from "@/components/posts/feed/PostFeedCardMed";
+
 export default {
   components: {
-    postFeedCard
+    postFeedCardMed
   },
   props: {
     post: {

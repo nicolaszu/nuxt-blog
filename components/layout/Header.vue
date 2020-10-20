@@ -1,40 +1,67 @@
 <template>
-  <header :class="[navHide, navShadow]">
+  <header
+    :class="[navHide, navShadow]"
+    class="w-full fixed z-10 py-2 px-12 flex items-center justify-between bg-white"
+  >
     <create-modal v-show="modalCreateShow" @close="modalCreateShow = false" />
-    <nav>
-      <ul>
-        <nuxt-link to="/" class="logo-wrapper">
-          {{ appName }}
-        </nuxt-link>
-        <li v-for="link in links" :key="link.name">
-          <nuxt-link
-            v-if="!searchOverlay"
-            :to="
-              link.filter
-                ? { name: 'index', query: { filter: link.filter } }
-                : { name: 'index' }
-            "
+    <div class="flex gap-24">
+      <nuxt-link to="/" class="text-xs uppercase cursor-pointer">
+        {{ appName }}
+      </nuxt-link>
+      <nav class="">
+        <ul class="flex flex-row">
+          <li
+            v-for="link in links"
+            :key="link.name"
+            class="text-xs text-gray-700 "
           >
-            {{ link.name }}
-          </nuxt-link>
-        </li>
-        <searchIcon @click="searchOverlay = true" />
-        <template v-if="searchOverlay">
-          <input
-            ref="search"
-            type="text"
-            v-model="searchQuery"
-            :placeholder="`Search ${appName}...`"
-            @keyup.enter="search()"
-          />
-          <closeIcon class="bigger-svg" @click="searchOverlay = false" />
-        </template>
-      </ul>
-      <span @click="modalCreateShow = true">
-        Create a Post
+            <nuxt-link v-if="!searchOverlay" :to="link.url">
+              {{ link.name }}
+            </nuxt-link>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="flex flex-row gap-3 self-center">
+      <button
+        v-if="!searchOverlay"
+        class="text-gray-700 text-xs flex flex-row gap-2 items-center p-2"
+        @click="searchOverlay = true"
+      >
+        <searchIcon class="text-gray-700" />
+        <p>Search</p>
+      </button>
+      <template v-else>
+        <searchIcon class="text-gray-700 self-center regular-svg" />
+        <input
+          ref="search"
+          type="text"
+          v-model="searchQuery"
+          :placeholder="`Search ${appName}...`"
+          @keyup.enter="search()"
+        />
+        <closeIcon
+          class="bigger-svg self-center cursor-pointer"
+          @click="searchOverlay = false"
+        />
+      </template>
+      <button
+        class="border border-solid border-gray-700 text-xs flex flex-row gap-2 items-center p-2 rounded"
+      >
+        Create
         <pen-icon />
-      </span>
-    </nav>
+      </button>
+      <div class="h-auto border-l border-solid border-gray-300"></div>
+      <button class="p-2 text-xs rounded">
+        Sign In
+      </button>
+      <button
+        class="bg-gray-700 text-white p-2 text-xs rounded"
+        @click="modalCreateShow = true"
+      >
+        Get Started
+      </button>
+    </div>
     <transition name="fade" duration="2000">
       <div
         v-if="searchOverlay"
@@ -58,7 +85,15 @@ export default {
       links: [
         {
           name: "Home",
-          filter: ""
+          url: ""
+        },
+        {
+          name: "Tech",
+          url: "tech"
+        },
+        {
+          name: "Science",
+          url: "science"
         }
       ],
       scrollPosition: 0,
@@ -155,98 +190,40 @@ export default {
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
 }
 
-header {
-  max-width: 100%;
-  width: 100%;
-  position: fixed;
-  background: hsla(0, 0%, 100%, 0.98) !important;
-  z-index: 10;
-  padding: 0.5rem;
-  height: 3.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: transform 0.2s linear, box-shadow 0.2s ease;
-  span {
-    cursor: pointer;
-    letter-spacing: $-ls2;
-    font-weight: $display-font-weight;
-    font-size: $text-sm;
-    display: flex;
-    padding: 0.5rem 0.5rem;
-    border-radius: 0.2rem;
-    user-select: none;
-    //background: $primary-light;
-    &:hover {
-      background: $primary-light;
-    }
-    svg {
-      margin-left: 0.5rem;
-      width: 1.2rem;
-      height: 1.2rem;
-    }
+button {
+  svg {
+    height: auto;
+    width: 18px;
+    @apply fill-current;
   }
-  .logo-wrapper {
-    cursor: default;
-    letter-spacing: $-ls2;
-    font-weight: $display-font-weight;
-    font-size: $text-lg;
-    display: flex;
-    margin-right: 3rem;
-  }
-  nav {
-    display: flex;
-    justify-content: space-between;
-    max-width: $screen-xl;
-    margin: auto;
-    letter-spacing: $-ls2;
-    font-size: $text-sm;
-    width: calc(100% - 2 * 1rem);
-    @media (min-width: $screen-sm) {
-      width: $screen-sm;
-    }
-    @media (min-width: $screen-lg) {
-      width: 1200px;
-    }
-    ul {
-      align-self: center;
-      display: flex;
-      align-items: center;
-      li {
-        margin: 0 0.5rem;
+}
 
-        a {
-          padding: 0.5rem 0.5rem;
-          user-select: none;
-          &:hover {
-            border-bottom: 3px solid $gray-color;
-          }
-          &.nuxt-link-exact-active {
-            cursor: default;
-            border-bottom: 3px solid;
-          }
-          &:active {
-            background: transparent;
-          }
-        }
+.regular-svg {
+  height: auto;
+  width: 18px;
+  @apply fill-current;
+}
+.bigger-svg {
+  width: 24px;
+  height: 24px;
+}
+
+header {
+  transition: transform 0.2s linear, box-shadow 0.2s ease;
+  nav {
+    a {
+      @apply p-4 mx-1;
+      user-select: none;
+      &:hover {
+        @apply cursor-default border-b-2 border-solid border-gray-700 text-black;
       }
-      svg {
-        width: 16px;
-        height: 16px;
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-        cursor: pointer;
-      }
-      .bigger-svg {
-        width: 24px;
-        height: 24px;
-      }
-      input {
-        font-size: $text-xs;
+      &.nuxt-link-exact-active {
+        @apply cursor-default border-b-2 border-solid border-black font-bold text-black;
       }
     }
   }
 }
+
 .overlay-search {
   opacity: 0.3;
   background: #000;

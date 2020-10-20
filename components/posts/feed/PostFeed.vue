@@ -27,7 +27,7 @@
           v-for="(post, i) in posts"
           :key="post.id"
           :post="post"
-          class="article-card-block"
+          class="article-card-block border-t  border-gray-300 "
           v-observe-visibility="i === posts.length - 1 ? emitLoadMore : false"
         />
       </div>
@@ -80,22 +80,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.article-cards-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  .article-card-block {
-    width: calc(100% - 2 * 1rem);
-    margin: 1rem;
-    margin-bottom: 1.5rem;
-    margin-top: 0.5rem;
-    @media (min-width: $screen-sm) {
-      width: calc(50% - 2 * 1rem);
-    }
-    @media (min-width: $screen-lg) {
-      width: calc(33.33333% - 2 * 1rem);
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>
