@@ -23,38 +23,23 @@
     </template>
     <template v-else>
       <div class="article-cards-wrapper">
-        <post-feed-card-md
-          v-for="(post, i) in posts"
+        <post-feed-card-sm
+          v-for="post in posts"
           :key="post.id"
-          v-observe-visibility="i === posts.length - 1 ? emitLoadMore : false"
           :post="post"
-          class="article-card-block border-t  border-gray-300 "
+          class="article-card-block  "
         />
       </div>
     </template>
-
-    <!-- <template v-if="loading && posts.length">
-      <div class="article-cards-wrapper">
-        <content-placeholders
-          v-for="p in 9"
-          :key="p"
-          rounded
-          class="article-card-block"
-        >
-          <content-placeholders-img />
-          <content-placeholders-text :lines="3" />
-        </content-placeholders>
-      </div>
-    </template> -->
   </div>
 </template>
 
 <script>
-import PostFeedCardMd from "@/components/posts/feed/PostFeedCardMd";
+import PostFeedCardSm from "@/components/posts/feed/PostFeedCardSm";
 
 export default {
   components: {
-    PostFeedCardMd
+    PostFeedCardSm
   },
   props: {
     posts: {
@@ -68,13 +53,6 @@ export default {
     error: {
       type: String,
       default: null
-    }
-  },
-  methods: {
-    emitLoadMore(visible) {
-      if (visible) {
-        this.$emit("loadMore");
-      }
     }
   }
 };

@@ -35,8 +35,8 @@
         <searchIcon class="text-gray-700 self-center regular-svg" />
         <input
           ref="search"
-          type="text"
           v-model="searchQuery"
+          type="text"
           :placeholder="`Search ${appName}...`"
           @keyup.enter="search()"
         />
@@ -46,7 +46,7 @@
         />
       </template>
       <button
-        class="border border-solid border-gray-700 text-xs flex flex-row gap-2 items-center p-2 rounded"
+        class="border border-solid border-gray-700 text-xs flex flex-row gap-2 items-center px-2 py-1 rounded"
       >
         Create
         <pen-icon />

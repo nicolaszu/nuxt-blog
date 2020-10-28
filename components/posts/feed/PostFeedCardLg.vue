@@ -1,6 +1,12 @@
 <template>
-  <div
-    class="card-wrapper w-full flex flex-row py-4 px-4 gap-5 hover:shadow-xs hover:bg-gray-100 cursor-pointer"
+  <component
+    :is="el(post.type)"
+    :to="{
+      name: 'post-post',
+      params: { post: post.id }
+    }"
+    :href="post.urlContent"
+    class="card-wrapper w-full flex flex-col py-4 px-4 gap-5 hover:shadow-xs hover:bg-gray-100 cursor-pointer"
   >
     <img v-if="post.coverImage" :src="post.coverImage" :alt="post.title" />
     <img
@@ -21,45 +27,25 @@
         <time>{{ $moment(post.dateCreated).format("MMM Do, YYYY ") }}</time>
       </p>
     </div>
-  </div>
+  </component>
 </template>
 
 <script>
+import postCardsMixin from "@/mixins/postCards";
+
 export default {
-  components: {},
-  props: {
-    post: {
-      type: Object,
-      default: null
-    }
-  },
-  computed: {
-    imgPlaceholder() {
-      const maxLenght = 4;
-      if (this.post.title && this.post.title.split(" ").length > maxLenght) {
-        const shortened = this.post.title
-          .split(" ")
-          .slice(0, maxLenght)
-          .join(" ")
-          .concat("...");
-        return shortened;
-      }
-      return this.post.title;
-    }
-  }
+  mixins: [postCardsMixin]
 };
 </script>
 
 <style lang="scss" scoped>
-$max-height: 10.5rem;
-
 img {
-  width: 396px;
-  height: auto;
+  width: auto;
+  height: 350px;
   object-fit: cover;
 }
 .card-wrapper {
-  height: $max-height;
+  height: fit-content;
 
   &:hover {
     .title {

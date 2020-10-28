@@ -1,9 +1,12 @@
 <template>
-  <div class="page-wrapper">
+  <div class="page-wrapper grid grid-rows-2 grid-cols-3 gap-4">
+    <post-feed-card-lg :post="posts[3]" class="col-span-2 row-span-2" />
+    <post-feed-popular :posts="popularPosts" class="col-span-1 row-span-2" />
     <post-feed
       :posts="posts"
       :error="error"
       :loading="$apollo.queries.posts.loading"
+      class="col-span-3 row-span-1"
       @loadMore="lazyLoadPosts"
     />
   </div>
@@ -11,12 +14,17 @@
 
 <script>
 import postFeed from "@/components/posts/feed/PostFeed";
+import postFeedPopular from "@/components/posts/feed/PostFeedPopular";
+
+import postFeedCardLg from "@/components/posts/feed/postFeedCardLg";
 
 import posts from "~/apollo/queries/posts";
 const limit = 6;
 export default {
   components: {
-    postFeed
+    postFeed,
+    postFeedCardLg,
+    postFeedPopular
   },
   apollo: {
     posts: {
@@ -49,6 +57,9 @@ export default {
         return true;
       }
       return false;
+    },
+    popularPosts() {
+      return this.posts.slice(0, 3);
     }
   },
   created() {
