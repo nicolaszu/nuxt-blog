@@ -1,6 +1,6 @@
 <template>
-  <div class="page-wrapper grid grid-rows-2 grid-cols-3 gap-4">
-    <post-feed-card-lg :post="posts[3]" class="col-span-2 row-span-2" />
+  <div class="px-40 pb-40 grid grid-rows-2 grid-cols-3 gap-4 ">
+    <post-feed-card-lg :post="posts[3]" class="col-span-2 row-span-2 mb-24" />
     <post-feed-popular :posts="popularPosts" class="col-span-1 row-span-2" />
     <post-feed
       :posts="posts"
@@ -16,7 +16,7 @@
 import postFeed from "@/components/posts/feed/PostFeed";
 import postFeedPopular from "@/components/posts/feed/PostFeedPopular";
 
-import postFeedCardLg from "@/components/posts/feed/postFeedCardLg";
+import postFeedCardLg from "@/components/posts/feed/cards/postFeedCardLg";
 
 import posts from "~/apollo/queries/posts";
 const limit = 6;
@@ -59,7 +59,7 @@ export default {
       return false;
     },
     popularPosts() {
-      return this.posts.slice(0, 3);
+      return this.posts.slice(0, 4);
     }
   },
   created() {
@@ -105,11 +105,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.page-wrapper {
-  max-width: $screen-xl;
-  margin: auto;
-  padding: 1rem;
-  min-height: 100vh;
-}
-</style>
+<style lang="scss" scoped></style>

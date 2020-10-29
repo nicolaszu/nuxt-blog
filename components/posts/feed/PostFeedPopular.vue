@@ -1,14 +1,14 @@
 <template>
   <div>
+    <h3 class="font-bold text-xl mb-4">Top Post of the Month</h3>
     <template v-if="loading && !posts.length">
-      <div class="article-cards-wrapper">
+      <div>
         <content-placeholders
-          v-for="p in 9"
+          v-for="p in 3"
           :key="p"
           rounded
           class="article-card-block"
         >
-          <content-placeholders-img />
           <content-placeholders-text :lines="3" />
         </content-placeholders>
       </div>
@@ -17,25 +17,25 @@
       error
     </template>
     <template v-else-if="!loading && !posts.length">
-      <div class="article-cards-wrapper">
+      <div>
         Oops...Looks like there are no matches
       </div>
     </template>
     <template v-else>
-      <div class="article-cards-wrapper">
-        <post-feed-card-sm
-          v-for="post in posts"
-          :key="post.id"
-          :post="post"
-          class="article-card-block  "
-        />
+      <div
+        v-for="(post, index) in posts"
+        :key="post.id"
+        class="flex items-center gap-4 "
+      >
+        <p class="text-xl font-bold text-gray-600">{{ index + 1 }}</p>
+        <post-feed-card-sm :post="post" />
       </div>
     </template>
   </div>
 </template>
 
 <script>
-import PostFeedCardSm from "@/components/posts/feed/PostFeedCardSm";
+import PostFeedCardSm from "@/components/posts/feed/cards/PostFeedCardSm";
 
 export default {
   components: {

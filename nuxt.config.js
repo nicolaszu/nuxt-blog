@@ -37,12 +37,10 @@ export default {
   /*
    ** Global CSS
    */
-  css: [
-    "~/assets/styles/reset.scss",
-    "~/assets/styles/base.scss",
-    "~/assets/styles/highlight.scss",
-    "~/assets/styles/app.scss"
-  ],
+  css: ["~/assets/styles/highlight.scss", "~/assets/styles/app.scss"],
+  tailwindcss: {
+    cssPath: "~/assets/styles/tailwind.scss"
+  },
   /*
    ** Plugins to load before mounting the App
    */

@@ -1,13 +1,8 @@
 <template>
   <div>
     <template v-if="loading && !posts.length">
-      <div class="article-cards-wrapper">
-        <content-placeholders
-          v-for="p in 9"
-          :key="p"
-          rounded
-          class="article-card-block"
-        >
+      <div class="">
+        <content-placeholders v-for="p in 9" :key="p" rounded class="">
           <content-placeholders-img />
           <content-placeholders-text :lines="3" />
         </content-placeholders>
@@ -17,29 +12,29 @@
       error
     </template>
     <template v-else-if="!loading && !posts.length">
-      <div class="article-cards-wrapper">
+      <div class="">
         Oops...Looks like there are no matches
       </div>
     </template>
     <template v-else>
-      <div class="article-cards-wrapper">
+      <div class="flex flex-col ">
         <post-feed-card-md
           v-for="(post, i) in posts"
           :key="post.id"
           v-observe-visibility="i === posts.length - 1 ? emitLoadMore : false"
           :post="post"
-          class="article-card-block border-t  border-gray-300 "
+          class=""
         />
       </div>
     </template>
 
     <!-- <template v-if="loading && posts.length">
-      <div class="article-cards-wrapper">
+      <div class="">
         <content-placeholders
           v-for="p in 9"
           :key="p"
           rounded
-          class="article-card-block"
+          class=""
         >
           <content-placeholders-img />
           <content-placeholders-text :lines="3" />
@@ -50,7 +45,7 @@
 </template>
 
 <script>
-import PostFeedCardMd from "@/components/posts/feed/PostFeedCardMd";
+import PostFeedCardMd from "@/components/posts/feed/cards/PostFeedCardMd";
 
 export default {
   components: {

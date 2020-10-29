@@ -6,18 +6,13 @@
       params: { post: post.id }
     }"
     :href="post.urlContent"
-    class="card-wrapper w-full flex flex-col py-4 px-4 gap-5 hover:shadow-xs hover:bg-gray-100 cursor-pointer"
+    class="card-wrapper w-full flex flex-col py-4 px-4 gap-5 rounded-xl hover:bg-gray-100 cursor-pointer"
   >
     <div class="flex flex-col gap-2">
-      <p class="text-gray-700 font-bold text-xs">Techology</p>
-      <h3 class="title font-bold text-xl">{{ post.title }}</h3>
-      <p class="description text-xs overflow-hidden">
-        {{ post.description }}
-      </p>
-      <p class="text-gray-700 text-xs">
-        <strong>{{ post.author }}</strong> on
-        <time>{{ $moment(post.dateCreated).format("MMM Do, YYYY ") }}</time>
-      </p>
+      <p class="text-gray-700 font-bold text-xs">Science</p>
+      <h3 class="title font-bold text-lg font-title ">{{ post.title }}</h3>
+
+      <meta-info :author="post.author" :date="post.dateCreated" />
     </div>
   </component>
 </template>

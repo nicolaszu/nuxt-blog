@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+
+@font-face {
+  font-family: "SofiaPro";
+  src: url("../fonts/SofiaPro-Bold.ttf");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "SofiaPro";
+  src: url("../fonts/SofiaPro-Regular.ttf");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "SofiaPro";
+  src: url("../fonts/SofiaPro-Light.ttf");
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-Regular.ttf");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-Italic.ttf");
+  font-style: italic;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-Light.ttf");
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-LightItalic.ttf");
+  font-style: italic;
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-Bold.ttf");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-BoldItalic.ttf");
+  font-style: italic;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-Black.ttf");
+  font-style: normal;
+  font-weight: 900;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../fonts/Merriweather-BlackItalic.ttf");
+  font-style: italic;
+  font-weight: 900;
+}
+
+@tailwind utilities;

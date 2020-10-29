@@ -1,5 +1,6 @@
+import MetaInfo from "@/components/posts/feed/cards/card-parts/MetaInfo";
 export default {
-  components: {},
+  components: { MetaInfo },
   props: {
     post: {
       type: Object,

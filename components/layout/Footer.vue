@@ -1,5 +1,5 @@
 <template>
-  <footer class="grid-container">
+  <footer class="grid-container px-40">
     <tooltip :tip="version" class="websiteName">
       {{ appName }}
     </tooltip>
@@ -24,6 +24,34 @@ export default {
 
 <style lang="scss" scoped>
 footer {
+  position: relative;
+  z-index: 1;
+
+  &:before,
+  &:after {
+    background: #f6f9fc;
+    content: "";
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    right: 0;
+    z-index: -1;
+  }
+
+  &:before {
+    top: 0;
+    transform: skewY(-4deg);
+    transform-origin: 0% 0;
+  }
+
+  &:after {
+    bottom: 0;
+    transform: skewY(0deg);
+    transform-origin: 100%;
+  }
+}
+footer {
   padding: 1.5rem 2rem 1rem 2rem;
   text-align: center;
   display: flex;
@@ -35,7 +63,6 @@ footer {
   line-height: 1;
   letter-spacing: $-ls2;
   font-size: $text-xs;
-  background: white;
   &.dark {
     background: #16161a;
     color: white;
@@ -50,6 +77,7 @@ footer {
   grid-template-columns: 1fr 5fr 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas: "websiteName . contactUs" "contributeLink . contactUs";
+  height: 105px;
 }
 
 .websiteName {
